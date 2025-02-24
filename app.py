@@ -1,3 +1,4 @@
+from bson import ObjectId
 from flask import Flask, render_template, url_for, request, redirect
 from pymongo import MongoClient
 
@@ -52,6 +53,37 @@ def display_registration():
 def user(name):
     demo = Demo()
     return render_template("user.html", content=name, x=42, demo=demo)
+
+
+@app.route('/edit/<student_id>', methods=['GET', 'POST'])
+def edit_student(student_id):
+    # Convert the student_id string to ObjectId
+    student = students.find_one({"_id": ObjectId(student_id)})
+
+    if request.method == 'POST':
+        # Update student data based on the submitted form
+        updated_data = {
+            'firstName': request.form['firstName'],
+            'lastName': request.form['lastName'],
+            'email': request.form['email'],
+            'dob': request.form['dob'],
+            'gender': request.form['gender'],
+            'course': request.form['course'],
+            'address': request.form['address']
+        }
+        students.update_one({"_id": ObjectId(student_id)}, {"$set": updated_data})
+        return redirect(url_for('registration_successful'))
+
+    return render_template("edit_student.html", student=student)
+
+
+@app.route('/delete/<student_id>', methods=['GET'])
+def delete_student(student_id):
+    from bson.objectid import ObjectId
+
+    students.delete_one({"_id": ObjectId(student_id)})
+
+    return redirect(url_for('display_registration'))
 
 
 db = Client.SchoolManagement
