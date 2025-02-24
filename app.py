@@ -31,15 +31,21 @@ def home():
             'course': course,
             'address': address
         })
-        return redirect(url_for('registrationsuccessful'))
+        return redirect(url_for('display_registration'))
 
     all_students = students.find()
     return render_template("registration.html", students=all_students)
 
 
-@app.route('/registrationsuccessful')
-def registrationsuccessful():
+@app.route('/registration_successful')
+def registration_successful():
     return render_template("index.html")
+
+
+@app.route('/display_registration', methods=['GET', 'POST'])
+def display_registration():
+    all_students = students.find()
+    return render_template("display_registration.html", students=all_students)
 
 
 @app.route('/user/<name>')
