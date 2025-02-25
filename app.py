@@ -1,5 +1,5 @@
 from bson import ObjectId
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, session
 from pymongo import MongoClient
 
 Client = MongoClient('localhost', 27017)
@@ -57,11 +57,9 @@ def user(name):
 
 @app.route('/edit/<student_id>', methods=['GET', 'POST'])
 def edit_student(student_id):
-    # Convert the student_id string to ObjectId
     student = students.find_one({"_id": ObjectId(student_id)})
 
     if request.method == 'POST':
-        # Update student data based on the submitted form
         updated_data = {
             'firstName': request.form['firstName'],
             'lastName': request.form['lastName'],
@@ -84,6 +82,12 @@ def delete_student(student_id):
     students.delete_one({"_id": ObjectId(student_id)})
 
     return redirect(url_for('display_registration'))
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('home'))
 
 
 db = Client.SchoolManagement
