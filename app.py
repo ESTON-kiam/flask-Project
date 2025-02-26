@@ -58,7 +58,6 @@ def user(name):
 @app.route('/edit/<student_id>', methods=['GET', 'POST'])
 def edit_student(student_id):
     student = students.find_one({"_id": ObjectId(student_id)})
-
     if request.method == 'POST':
         updated_data = {
             'firstName': request.form['firstName'],
